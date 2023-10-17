@@ -1,0 +1,99 @@
+﻿@page "/courses"
+@inject IRepository repository
+@inject NavigationManager navigationManager
+@inject SweetAlertService sweetAlertService
+
+
+<h3>Listado de cursos</h3>
+<div class="mb-3">
+    <a class="btn btn-primary" href="/course/create">Nuevo curso</a>
+</div>
+
+<GenericList MyList="Courses">
+    <Body>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Titulo</th>
+                    <th>Descripción corta</th>
+                    <th>Descripción larga</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var course in Courses!)
+                {
+                    <tr>
+                        <td>
+                            @course.Title
+                        </td>
+                        <td>
+                            @course.ShortDescription
+                        </td>
+                        <td>
+                            @course.LargeDescription
+                        </td>
+                        <td>
+                            <a class="btn btn-info">Detalles</a>
+                            <a href="/course/edit/@course.Id"  class="btn btn-warning">Editar</a>
+                            <button class="btn btn-danger" @onclick=@(() => DeleteAsync(course))>Borrar</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </Body>
+</GenericList>
+
+@code {
+    public List<Course>? Courses { get; set; }
+
+    protected async override Task OnInitializedAsync()
+    {
+        await LoadAsync();
+    }
+
+    private async Task LoadAsync()
+    {
+        var responseHppt = await repository.GetAsync<List<Course>>("api/courses");
+        Courses = responseHppt.Response!;
+    }
+
+    private async Task DeleteAsync(Course course)
+    {
+        var result = await sweetAlertService.FireAsync(new SweetAlertOptions
+            {
+                Title = "Confirmación",
+                Text = $"¿Esta seguro que quieres borrar el curso {course.Title}?",
+                Icon = SweetAlertIcon.Question,
+                ShowCancelButton = true
+            });
+
+        var confirm = string.IsNullOrEmpty(result.Value);
+
+        if (confirm)
+        {
+            return;
+        }
+
+        var responseHTTP = await repository.DeleteAsync($"api/courses/{course.Id}");
+
+        if (responseHTTP.Error)
+        {
+            if (responseHTTP.HttpResponseMessage.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                navigationManager.NavigateTo("/courses");
+            }
+            else
+            {
+                var mensajeError = await responseHTTP.GetErrorMessageAsync();
+                await sweetAlertService.FireAsync("Error", mensajeError, SweetAlertIcon.Error);
+            }
+        }
+        else
+        {
+            await LoadAsync();
+        }
+    }
+
+}

@@ -1,0 +1,63 @@
+﻿@page "/course/edit/{Id:int}"
+@inject IRepository repository
+@inject NavigationManager navigationManager
+@inject SweetAlertService sweetAlertService
+
+<h3>Editar curso</h3>
+
+@if (course is null)
+{
+    <p>Cargando...</p>
+}
+else
+{
+    <CourseForm Course="course" OnValidSubmit="EditAsync" ReturnAction="Return" />
+}
+
+@code {
+    private Course? course;
+
+    [Parameter]
+    public int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var responseHTTP = await repository.GetAsync<Course>($"api/courses/{Id}");
+
+        if (responseHTTP.Error)
+        {
+            if (responseHTTP.HttpResponseMessage.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                navigationManager.NavigateTo("/courses");
+            }
+            else
+            {
+                var messageError = await responseHTTP.GetErrorMessageAsync();
+                await sweetAlertService.FireAsync("Error", messageError, SweetAlertIcon.Error);
+            }
+        }
+        else
+        {
+            course = responseHTTP.Response;
+        }
+    }
+
+    private async Task EditAsync()
+    {
+        var responseHTTP = await repository.PutAsync("api/courses", course);
+
+        if (responseHTTP.Error)
+        {
+            var mensajeError = await responseHTTP.GetErrorMessageAsync();
+            await sweetAlertService.FireAsync("Error", mensajeError, SweetAlertIcon.Error);
+            return;
+        }
+
+        Return();
+    }
+
+    private void Return()
+    {
+        navigationManager.NavigateTo("/courses");
+    }
+}

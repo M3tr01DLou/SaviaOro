@@ -1,0 +1,31 @@
+﻿@page "/course/create"
+@inject IRepository repository
+@inject NavigationManager navigationManager
+@inject SweetAlertService sweetAlertService
+
+<h3>Nuevo curso</h3>
+
+<CourseForm Course="course" OnValidSubmit="CreateAsync" ReturnAction="Return"/>
+
+@code {
+    private Course course = new();
+
+    private async Task CreateAsync()
+    {
+        var responseHttp = await repository.PostAsync("/api/courses", course);
+        if (responseHttp.Error)
+        {
+            var message = await responseHttp.GetErrorMessageAsync();
+            await sweetAlertService.FireAsync("Error", message, SweetAlertIcon.Error);
+            return;
+        }
+
+        Return();
+    }
+
+    private void Return()
+    {
+        navigationManager.NavigateTo("/courses");
+    }
+}
+

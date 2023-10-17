@@ -1,0 +1,41 @@
+﻿<EditForm Model="Course" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator />
+    <div class="mb-3">
+        <label>Título:</label>
+        <div>
+            <InputText class="form-control" @bind-Value="@Course.Title" />
+            <ValidationMessage For="@(() => Course.Title)" />
+        </div>
+    </div>
+    <div class="mb-3">
+        <label>Descripción corta:</label>
+        <div>
+            <InputText class="form-control" @bind-Value="@Course.ShortDescription" />
+            <ValidationMessage For="@(() => Course.ShortDescription)" />
+        </div>
+    </div>
+    <div class="mb-3">
+        <label>Descripción larga:</label>
+        <div>
+            <InputText class="form-control" @bind-Value="@Course.LargeDescription" />
+            <ValidationMessage For="@(() => Course.LargeDescription)" />
+        </div>
+    </div>
+
+    <button class="btn btn-primary" type="submit">Guardar Cambios</button>
+    <button class="btn btn-success" @onclick="ReturnAction">Volver</button>
+</EditForm>
+
+@code {
+    [EditorRequired]
+    [Parameter]
+    public Course Course { get; set; } = null!;
+
+    [EditorRequired]
+    [Parameter]
+    public EventCallback OnValidSubmit { get; set; }
+
+    [EditorRequired]
+    [Parameter]
+    public EventCallback ReturnAction { get; set; }
+}
