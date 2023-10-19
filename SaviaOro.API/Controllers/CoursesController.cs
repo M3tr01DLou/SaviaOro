@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using SaviaOro.API.Helpers;
 using SaviaOro.Shared.Data;
 using SaviaOro.Shared.Entities;
 using System;
@@ -11,10 +12,14 @@ namespace SaviaOro.API.Controllers
     public class CoursesController : ControllerBase
     {
         private readonly DataContext _context;
+        private readonly IImageHelper _imageHelper;
+        private readonly string _container;
 
-        public CoursesController(DataContext context)
+        public CoursesController(DataContext context, IImageHelper imageHelper)
         {
             _context = context;
+            _imageHelper = imageHelper;
+            _container = "courses";
         }
 
         [HttpGet]
@@ -40,6 +45,11 @@ namespace SaviaOro.API.Controllers
         {
             try
             {
+                if (!string.IsNullOrEmpty(course.Photo))
+                {
+                    var photoUser = Convert.FromBase64String(course.Photo);
+                    course.Photo = _imageHelper.UploadImageAsync(photoUser, _container);
+                }
                 _context.Add(course);
                 await _context.SaveChangesAsync();
                 return Ok(course);
@@ -64,6 +74,11 @@ namespace SaviaOro.API.Controllers
         {
             try
             {
+                if (!string.IsNullOrEmpty(course.Photo))
+                {
+                    var photoUser = Convert.FromBase64String(course.Photo);
+                    course.Photo = _imageHelper.UploadImageAsync(photoUser, _container);
+                }
                 _context.Update(course);
                 await _context.SaveChangesAsync();
                 return Ok(course);

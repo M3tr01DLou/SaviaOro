@@ -4,47 +4,57 @@
 @inject SweetAlertService sweetAlertService
 
 
-<h3>Listado de cursos</h3>
-<div class="mb-3">
-    <a class="btn btn-primary" href="/course/create">Nuevo curso</a>
-</div>
-
-<GenericList MyList="Courses">
-    <Body>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Titulo</th>
-                    <th>Descripción corta</th>
-                    <th>Descripción larga</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var course in Courses!)
-                {
-                    <tr>
-                        <td>
-                            @course.Title
-                        </td>
-                        <td>
-                            @course.ShortDescription
-                        </td>
-                        <td>
-                            @course.LargeDescription
-                        </td>
-                        <td>
-                            <a class="btn btn-info">Detalles</a>
-                            <a href="/course/edit/@course.Id"  class="btn btn-warning">Editar</a>
-                            <button class="btn btn-danger" @onclick=@(() => DeleteAsync(course))>Borrar</button>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </Body>
-</GenericList>
-
+    <div class="card">
+        <div class="card-header">
+            <span>
+                <i class="oi oi-file"></i> Listado de cursos
+                <a class="btn btn-primary btn-sm float-end" href="/course/create">Nuevo curso</a>
+            </span>
+        </div>
+        <div class="card-body">
+            <GenericList MyList="Courses">
+                <Body>
+                    <div class="table-responsive">
+                        <table class="table align-middle table-sm table-striped">
+                            <thead>
+                                <tr>
+                                    <th scope="col"></th>
+                                    <th scope="col">Titulo</th>
+                                    <th scope="col">Descripción corta</th>
+                                    <th scope="col">Descripción larga</th>
+                                    <th scope="col"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var course in Courses!)
+                                {
+                                    <tr>
+                                        <td>
+                                            <img src="@course.PhotoFullPath" width="80" height="80" style="border-radius:50%" />
+                                        </td>
+                                        <td>
+                                            @course.Title
+                                        </td>
+                                        <td>
+                                            @course.ShortDescription
+                                        </td>
+                                        <td>
+                                            @course.LargeDescription
+                                        </td>
+                                        <td>
+                                            <a class="btn btn-info btn-sm">Detalles</a>
+                                            <a href="/course/edit/@course.Id" class="btn btn-warning btn-sm">Editar</a>
+                                            <button class="btn btn-danger btn-sm" @onclick=@(() => DeleteAsync(course))>Borrar</button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </Body>
+            </GenericList>
+        </div>
+    </div>
 @code {
     public List<Course>? Courses { get; set; }
 

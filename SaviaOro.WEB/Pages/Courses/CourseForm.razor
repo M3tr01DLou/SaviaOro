@@ -1,32 +1,53 @@
 ﻿<EditForm Model="Course" OnValidSubmit="OnValidSubmit">
     <DataAnnotationsValidator />
-    <div class="mb-3">
-        <label>Título:</label>
-        <div>
-            <InputText class="form-control" @bind-Value="@Course.Title" />
-            <ValidationMessage For="@(() => Course.Title)" />
+
+    <div class="card">
+        <div class="card-header">
+            <span>
+                <i class="oi oi-file"></i> @(Course.Id > 0 ? "Editar curso" : "Nuevo curso")
+            </span>
         </div>
-    </div>
-    <div class="mb-3">
-        <label>Descripción corta:</label>
-        <div>
-            <InputText class="form-control" @bind-Value="@Course.ShortDescription" />
-            <ValidationMessage For="@(() => Course.ShortDescription)" />
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3">
+                    <InputImg Label="Foto" ImageSelected="ImageSelected" ImageURL="@imageUrl" />
+                </div>
+                <div class="col-md-9">
+                    <div class="mb-3">
+                        <label>Título:</label>
+                        <div>
+                            <InputText class="form-control form-control-sm" @bind-Value="@Course.Title" />
+                            <ValidationMessage For="@(() => Course.Title)" />
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label>Descripción corta:</label>
+                        <div>
+                            <InputText class="form-control form-control-sm" @bind-Value="@Course.ShortDescription" />
+                            <ValidationMessage For="@(() => Course.ShortDescription)" />
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label>Descripción larga:</label>
+                        <div>
+                            <InputText class="form-control form-control-sm" @bind-Value="@Course.LargeDescription" />
+                            <ValidationMessage For="@(() => Course.LargeDescription)" />
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
-    <div class="mb-3">
-        <label>Descripción larga:</label>
-        <div>
-            <InputText class="form-control" @bind-Value="@Course.LargeDescription" />
-            <ValidationMessage For="@(() => Course.LargeDescription)" />
+        <div class="card-footer text-center">
+            <button class="btn btn-primary btn-sm" type="submit">Guardar Cambios</button>
+            <button class="btn btn-success btn-sm" @onclick="ReturnAction">Volver</button>
         </div>
     </div>
 
-    <button class="btn btn-primary" type="submit">Guardar Cambios</button>
-    <button class="btn btn-success" @onclick="ReturnAction">Volver</button>
 </EditForm>
 
 @code {
+    private string imageUrl;
+
     [EditorRequired]
     [Parameter]
     public Course Course { get; set; } = null!;
@@ -38,4 +59,16 @@
     [EditorRequired]
     [Parameter]
     public EventCallback ReturnAction { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        imageUrl = Course.PhotoFullPath;
+        Course.Photo = null;
+    }
+
+    private void ImageSelected(string imagenBase64)
+    {
+        Course.Photo = imagenBase64;
+        imageUrl = null;
+    }
 }

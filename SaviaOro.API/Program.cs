@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using SaviaOro.API.Helpers;
 using SaviaOro.Shared.Data;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +12,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 //builder.Services.AddDbContext<DataContext>(x => x.UseSqlServer("name=LocalConnection"));
 builder.Services.AddDbContext<DataContext>(x => x.UseSqlServer(builder.Configuration.GetConnectionString("LocalConnection"), b => b.MigrationsAssembly("SaviaOro.API")));
+builder.Services.AddScoped<IImageHelper, ImageHelper>();
 
 var app = builder.Build();
 
@@ -22,10 +23,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseStaticFiles();
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.UseCors(x => x

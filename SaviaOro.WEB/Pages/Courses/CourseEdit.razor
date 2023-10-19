@@ -3,8 +3,6 @@
 @inject NavigationManager navigationManager
 @inject SweetAlertService sweetAlertService
 
-<h3>Editar curso</h3>
-
 @if (course is null)
 {
     <p>Cargando...</p>
@@ -44,8 +42,8 @@ else
 
     private async Task EditAsync()
     {
+        course.ModificationDate = DateTime.UtcNow;
         var responseHTTP = await repository.PutAsync("api/courses", course);
-
         if (responseHTTP.Error)
         {
             var mensajeError = await responseHTTP.GetErrorMessageAsync();

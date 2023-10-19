@@ -3,8 +3,6 @@
 @inject NavigationManager navigationManager
 @inject SweetAlertService sweetAlertService
 
-<h3>Nuevo curso</h3>
-
 <CourseForm Course="course" OnValidSubmit="CreateAsync" ReturnAction="Return"/>
 
 @code {
@@ -12,6 +10,8 @@
 
     private async Task CreateAsync()
     {
+        course.CreationDate = DateTime.UtcNow;
+        course.Active = true;
         var responseHttp = await repository.PostAsync("/api/courses", course);
         if (responseHttp.Error)
         {
