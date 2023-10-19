@@ -3,7 +3,14 @@
 @inject NavigationManager navigationManager
 @inject SweetAlertService sweetAlertService
 
-<CourseForm Course="course" OnValidSubmit="CreateAsync" ReturnAction="Return"/>
+@if (course is null)
+{
+    <Loading/>
+}
+else
+{
+    <CourseForm Course="course" OnValidSubmit="CreateAsync" ReturnAction="Return"/>
+}
 
 @code {
     private Course course = new();

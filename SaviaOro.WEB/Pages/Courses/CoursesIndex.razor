@@ -3,7 +3,12 @@
 @inject NavigationManager navigationManager
 @inject SweetAlertService sweetAlertService
 
-
+@if (Courses is null)
+{
+    <Loading/>
+}
+else
+{
     <div class="card">
         <div class="card-header">
             <span>
@@ -55,6 +60,8 @@
             </GenericList>
         </div>
     </div>
+}
+
 @code {
     public List<Course>? Courses { get; set; }
 
