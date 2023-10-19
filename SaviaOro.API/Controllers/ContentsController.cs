@@ -1,38 +1,33 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualBasic;
 using SaviaOro.API.Helpers;
 using SaviaOro.Shared.Data;
 using SaviaOro.Shared.Entities;
-using System;
 
 namespace SaviaOro.API.Controllers
 {
     [ApiController]
-    [Route("/api/courses")]
-    public class CoursesController : ControllerBase
+    [Route("/api/contents")]
+    public class ContentsController : ControllerBase
     {
         private readonly DataContext _context;
-        private readonly IImageHelper _imageHelper;
-        private readonly string _container;
 
-        public CoursesController(DataContext context, IImageHelper imageHelper)
+        public ContentsController(DataContext context)
         {
             _context = context;
-            _imageHelper = imageHelper;
-            _container = "courses";
         }
 
         [HttpGet]
         public async Task<ActionResult> GetAsync()
         {
-            return Ok(await _context.Courses.ToListAsync());
+            return Ok(await _context.Contents.ToListAsync());
         }
 
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetAsync(int id)
         {
-            var course = await _context.Courses
-                .Include(c => c.Contents)
+            var course = await _context.Contents
                 .FirstOrDefaultAsync(x => x.Id == id);
             if (course == null)
             {
@@ -42,24 +37,19 @@ namespace SaviaOro.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> PostAsync(Course course)
+        public async Task<ActionResult> PostAsync(Content content)
         {
             try
             {
-                if (!string.IsNullOrEmpty(course.Photo))
-                {
-                    var photoUser = Convert.FromBase64String(course.Photo);
-                    course.Photo = _imageHelper.UploadImageAsync(photoUser, _container);
-                }
-                _context.Add(course);
+                _context.Add(content);
                 await _context.SaveChangesAsync();
-                return Ok(course);
+                return Ok(content);
             }
             catch (DbUpdateException dbUpdateException)
             {
                 if (dbUpdateException.InnerException.Message.Contains("duplicate"))
                 {
-                    return BadRequest($"El curso {course.Title} ya existe en la base de datos.");
+                    return BadRequest($"El contenido {content.Title} ya existe para el mismo curso en la base de datos.");
                 }
 
                 return BadRequest(dbUpdateException.InnerException.Message);
@@ -71,24 +61,19 @@ namespace SaviaOro.API.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult> PutAsync(Course course)
+        public async Task<ActionResult> PutAsync(Content content)
         {
             try
             {
-                if (!string.IsNullOrEmpty(course.Photo))
-                {
-                    var photoUser = Convert.FromBase64String(course.Photo);
-                    course.Photo = _imageHelper.UploadImageAsync(photoUser, _container);
-                }
-                _context.Update(course);
+                _context.Update(content);
                 await _context.SaveChangesAsync();
-                return Ok(course);
+                return Ok(content);
             }
             catch (DbUpdateException dbUpdateException)
             {
                 if (dbUpdateException.InnerException.Message.Contains("duplicate"))
                 {
-                    return BadRequest($"El curso {course.Title} ya existe en la base de datos.");
+                    return BadRequest($"El contenido {content.Title} ya existe para el mismo curso en la base de datos.");
                 }
 
                 return BadRequest(dbUpdateException.InnerException.Message);
@@ -102,12 +87,12 @@ namespace SaviaOro.API.Controllers
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteAsync(int id)
         {
-            var course = await _context.Courses.FirstOrDefaultAsync(x => x.Id == id);
-            if (course == null)
+            var content = await _context.Contents.FirstOrDefaultAsync(x => x.Id == id);
+            if (content == null)
             {
                 return NotFound();
             }
-            _context.Remove(course);
+            _context.Remove(content);
             await _context.SaveChangesAsync();
             return NoContent();
         }

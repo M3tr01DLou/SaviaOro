@@ -1,0 +1,50 @@
+﻿@page "/course/content/create/{CourseId:int}"
+@inject IRepository repository
+@inject NavigationManager navigationManager
+@inject SweetAlertService sweetAlertService
+
+@if (content is null)
+{
+    <Loading/>
+}
+else
+{
+	<ContentForm Content="content" OnValidSubmit="CreateAsync" ReturnAction="Return" />
+}
+
+
+@code {
+	private Content content = new();
+
+	[Parameter]
+	public int CourseId { get; set; }
+
+	private async Task CreateAsync()
+	{
+		content.CourseId = CourseId;
+		content.CreationDate = DateTime.UtcNow;
+		var responseHttp = await repository.PostAsync("/api/contents", content);
+		if (responseHttp.Error)
+		{
+			var message = await responseHttp.GetErrorMessageAsync();
+			await sweetAlertService.FireAsync(new SweetAlertOptions
+				{
+					Title = "Error",
+					Text = message,
+					Icon = SweetAlertIcon.Error,
+					ConfirmButtonText = "Aceptar",
+					AllowOutsideClick = false,
+					AllowEnterKey = false,
+					AllowEscapeKey = false,
+				});
+			return;
+		}
+
+		Return();
+	}
+
+	private void Return()
+	{
+		navigationManager.NavigateTo($"/course/content/{CourseId}");
+	}
+}

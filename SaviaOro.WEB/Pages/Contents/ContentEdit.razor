@@ -1,0 +1,76 @@
+﻿@page "/course/content/edit/{ContentId:int}"
+@inject IRepository repository
+@inject NavigationManager navigationManager
+@inject SweetAlertService sweetAlertService
+
+@if (content is null)
+{
+	<Loading/>
+}
+else
+{
+	<ContentForm Content="content" OnValidSubmit="EditAsync" ReturnAction="Return" />
+}
+
+@code {
+	private Content? content { get; set; }
+
+	[Parameter]
+	public int ContentId { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		var responseHttp = await repository.GetAsync<Content>($"/api/contents/{ContentId}");
+		if (responseHttp.Error)
+		{
+			if (responseHttp.HttpResponseMessage.StatusCode == HttpStatusCode.NotFound)
+			{
+				navigationManager.NavigateTo($"/courses");
+				return;
+			}
+
+			var message = await responseHttp.GetErrorMessageAsync();
+			await sweetAlertService.FireAsync(new SweetAlertOptions
+				{
+					Title = "Error",
+					Text = message,
+					Icon = SweetAlertIcon.Error,
+					ConfirmButtonText = "Aceptar",
+					AllowOutsideClick = false,
+					AllowEnterKey = false,
+					AllowEscapeKey = false,
+				});
+			return;
+		}
+
+		content = responseHttp.Response;
+	}
+
+	private async Task EditAsync()
+	{
+		content.ModificationDate = DateTime.UtcNow;
+		var responseHttp = await repository.PutAsync("/api/contents", content);
+		if (responseHttp.Error)
+		{
+			var message = await responseHttp.GetErrorMessageAsync();
+			await sweetAlertService.FireAsync(new SweetAlertOptions
+				{
+					Title = "Error",
+					Text = message,
+					Icon = SweetAlertIcon.Error,
+					ConfirmButtonText = "Aceptar",
+					AllowOutsideClick = false,
+					AllowEnterKey = false,
+					AllowEscapeKey = false,
+				});
+			return;
+		}
+
+		Return();
+	}
+
+	private void Return()
+	{
+		navigationManager.NavigateTo($"/course/content/{content!.CourseId}");
+	}
+}

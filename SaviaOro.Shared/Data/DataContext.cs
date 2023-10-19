@@ -16,10 +16,13 @@ namespace SaviaOro.Shared.Data
 
         public DbSet<Course> Courses { get; set; }
 
+        public DbSet<Content> Contents { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<Course>().HasIndex(c => c.Title).IsUnique();
+            modelBuilder.Entity<Content>().HasIndex("Title", "CourseId").IsUnique();
         }
 
     }

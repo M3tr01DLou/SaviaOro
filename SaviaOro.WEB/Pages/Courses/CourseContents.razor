@@ -1,0 +1,144 @@
+﻿@page "/course/content/{Id:int}"
+@inject IRepository repository
+@inject NavigationManager navigationManager
+@inject SweetAlertService sweetAlertService
+
+@if (course is null || loading)
+{
+    <Loading />
+}
+else
+{
+    <div class="card">
+        <div class="card-header">
+            <span>
+                <i class="oi oi-file"></i> Contenido del curso - @course.Title
+                <a class="btn btn-primary btn-sm float-end" href="/course/content/create/@course.Id">Nuevo contenido</a>
+            </span>
+        </div>
+        <div class="card-body">
+            <GenericList MyList="contents">
+                <Body>
+                    <div class="table-responsive">
+                        <table class="table align-middle table-sm table-striped">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Titulo</th>
+                                    <th scope="col">Descripción corta</th>
+                                    <th scope="col">Descripción larga</th>
+                                    <th scope="col"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var content in contents!)
+                                {
+                                    <tr>
+                                        <td>
+                                            @content.Title
+                                        </td>
+                                        <td>
+                                            @content.ShortDescription
+                                        </td>
+                                        <td>
+                                            @content.LargeDescription
+                                        </td>
+                                        <td>
+                                            <a href="/course/content/edit/@content.Id" class="btn btn-warning btn-sm">Editar</a>
+                                            <button class="btn btn-danger btn-sm" @onclick=@(() => DeleteAsync(content))>Borrar</button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </Body>
+            </GenericList>
+        </div>
+        <div class="card-footer text-center">
+            <a class="btn btn-success btn-sm" href="/courses">Volver</a>
+        </div>
+    </div>    
+}
+
+@code {
+    private Course? course { get; set; }
+    private List<Content>? contents;
+    private bool loading;
+
+    [Parameter]
+    public int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadCourseContentAsync();
+    }
+
+    private async Task LoadCourseContentAsync()
+    {
+        loading = true;
+        var responseHttp = await repository.GetAsync<Course>($"/api/courses/{Id}");
+        loading = false;
+
+        if (responseHttp.Error)
+        {
+            if (responseHttp.HttpResponseMessage.StatusCode == HttpStatusCode.NotFound)
+            {
+                navigationManager.NavigateTo("/countries");
+                return;
+            }
+
+            var message = await responseHttp.GetErrorMessageAsync();
+            await sweetAlertService.FireAsync(new SweetAlertOptions
+        		{
+        			Title = "Error",
+        			Text = message,
+        			Icon = SweetAlertIcon.Error,
+        			ConfirmButtonText = "Aceptar",
+        			AllowOutsideClick = false,
+        			AllowEnterKey = false,
+        			AllowEscapeKey = false,
+        		});
+            return;
+        }
+
+        course = responseHttp.Response!;
+        contents = course.Contents.ToList();
+    }
+
+    private async Task DeleteAsync(Content content)
+    {
+        var result = await sweetAlertService.FireAsync(new SweetAlertOptions
+            {
+                Title = "Confirmación",
+                Text = $"¿Esta seguro que quieres borrar el contenido {content.Title}?",
+                Icon = SweetAlertIcon.Question,
+                ShowCancelButton = true
+            });
+
+        var confirm = string.IsNullOrEmpty(result.Value);
+
+        if (confirm)
+        {
+            return;
+        }
+
+        var responseHTTP = await repository.DeleteAsync($"api/contents/{content.Id}");
+
+        if (responseHTTP.Error)
+        {
+            if (responseHTTP.HttpResponseMessage.StatusCode == HttpStatusCode.NotFound)
+            {
+                navigationManager.NavigateTo("/courses");
+            }
+            else
+            {
+                var mensajeError = await responseHTTP.GetErrorMessageAsync();
+                await sweetAlertService.FireAsync("Error", mensajeError, SweetAlertIcon.Error);
+            }
+        }
+        else
+        {
+            await LoadCourseContentAsync();
+        }
+    }
+}

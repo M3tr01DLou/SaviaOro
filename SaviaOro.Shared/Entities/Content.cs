@@ -2,7 +2,7 @@
 
 namespace SaviaOro.Shared.Entities
 {
-    public class Course
+    public class Content
     {
         public int Id { get; set; }
 
@@ -25,15 +25,8 @@ namespace SaviaOro.Shared.Entities
 
         public DateTime? ModificationDate { get; set; } = null;
 
-        public string Photo { get; set; }
+        public Course Course { get; set; }
 
-        //TODO
-        public string PhotoFullPath => string.IsNullOrEmpty(Photo)
-            ? "https://localhost:7223/images/noimage.png"
-            : $"https://localhost:7223/{Photo.Substring(1)}";
-
-        public bool Active { get; set; }
-
-        public ICollection<Content> Contents { get; set; }
+        public int CourseId { get; set; }
     }
 }

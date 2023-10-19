@@ -47,7 +47,7 @@ else
                                             @course.LargeDescription
                                         </td>
                                         <td>
-                                            <a class="btn btn-info btn-sm">Detalles</a>
+                                            <a href="/course/content/@course.Id" class="btn btn-info btn-sm">Detalles</a>
                                             <a href="/course/edit/@course.Id" class="btn btn-warning btn-sm">Editar</a>
                                             <button class="btn btn-danger btn-sm" @onclick=@(() => DeleteAsync(course))>Borrar</button>
                                         </td>

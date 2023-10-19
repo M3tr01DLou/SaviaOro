@@ -1,0 +1,53 @@
+﻿<EditForm Model="Content" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator />
+
+    <div class="card">
+        <div class="card-header">
+            <span>
+                <i class="oi oi-file"></i> @(Content.Id > 0 ? "Editar contenido" : "Nuevo contenido")
+            </span>
+        </div>
+        <div class="card-body">
+            <div class="mb-3">
+                <label>Título:</label>
+                <div>
+                    <InputText class="form-control form-control-sm" @bind-Value="@Content.Title" />
+                    <ValidationMessage For="@(() => Content.Title)" />
+                </div>
+            </div>
+            <div class="mb-3">
+                <label>Descripción corta:</label>
+                <div>
+                    <InputText class="form-control form-control-sm" @bind-Value="@Content.ShortDescription" />
+                    <ValidationMessage For="@(() => Content.ShortDescription)" />
+                </div>
+            </div>
+            <div class="mb-3">
+                <label>Descripción larga:</label>
+                <div>
+                    <InputText class="form-control form-control-sm" @bind-Value="@Content.LargeDescription" />
+                    <ValidationMessage For="@(() => Content.LargeDescription)" />
+                </div>
+            </div>
+        </div>
+        <div class="card-footer text-center">
+            <button class="btn btn-primary btn-sm" type="submit">Guardar Cambios</button>
+            <button class="btn btn-success btn-sm" @onclick="ReturnAction">Volver</button>
+        </div>
+    </div>
+
+</EditForm>
+
+@code {
+    [EditorRequired]
+    [Parameter]
+    public Content Content { get; set; } = null!;
+
+    [EditorRequired]
+    [Parameter]
+    public EventCallback OnValidSubmit { get; set; }
+
+    [EditorRequired]
+    [Parameter]
+    public EventCallback ReturnAction { get; set; }
+}
