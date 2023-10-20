@@ -1,10 +1,31 @@
 ﻿@inherits LayoutComponentBase
-@inject NavigationManager navigationManager
+
+<Layout Sider>
+    <LayoutSider>
+        <LayoutSiderContent>
+            <NavMenu />
+        </LayoutSiderContent>
+    </LayoutSider>
+    <Layout>
+@*         <LayoutHeader>
+            <TopBar />
+        </LayoutHeader> *@
+        <LayoutContent Padding="Padding.Is4">
+            @Body
+        </LayoutContent>
+        <LayoutFooter>
+            Footer
+        </LayoutFooter>
+    </Layout>
+</Layout>
+
+
+@* @inject NavigationManager navigationManager
 
 <div class="page">
-@*     <div class="sidebar">
+    <div class="sidebar">
         <NavMenu />
-    </div> *@
+    </div>
 
     <main>
         <div class="top-row px-4">
@@ -52,3 +73,4 @@
 
     </main>
 </div>
+ *@

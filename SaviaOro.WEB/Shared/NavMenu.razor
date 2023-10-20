@@ -1,4 +1,43 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿<Bar Mode="BarMode.VerticalInline"
+     CollapseMode="BarCollapseMode.Small"
+     Breakpoint="Breakpoint.Desktop"
+     NavigationBreakpoint="Breakpoint.Tablet"
+     ThemeContrast="ThemeContrast.Dark">
+    <BarToggler/>
+    <BarBrand>
+        <BarItem>
+            <BarLink To="/">
+                <BarIcon IconName="IconName.CheckDouble" />
+                Blazorise Demo
+            </BarLink>
+        </BarItem>
+    </BarBrand>
+    <BarMenu>
+        <BarStart>
+            <BarItem>
+                <BarLink To="/">
+                    <BarIcon IconName="IconName.Dashboard" />
+                    Home
+                </BarLink>
+            </BarItem>
+            <BarItem>
+                <BarLink To="/counter">
+                    <BarIcon IconName="IconName.Dashboard" />
+                    Counter
+                </BarLink>
+            </BarItem>
+            <BarItem>
+                <BarLink To="/courses">
+                    <BarIcon IconName="IconName.Dashboard" />
+                    Course
+                </BarLink>
+            </BarItem>
+        </BarStart>
+    </BarMenu>
+</Bar>
+
+
+@* <div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">SaviaOro.WEB</a>
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
@@ -42,3 +81,4 @@
         collapseNavMenu = !collapseNavMenu;
     }
 }
+ *@

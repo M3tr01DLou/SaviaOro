@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SaviaOro.Shared.Data
+namespace SaviaOro.API.Data
 {
     public class DataContext : DbContext
     {

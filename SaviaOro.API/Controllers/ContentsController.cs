@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualBasic;
-using SaviaOro.API.Helpers;
-using SaviaOro.Shared.Data;
+using SaviaOro.API.Data;
 using SaviaOro.Shared.Entities;
 
 namespace SaviaOro.API.Controllers
@@ -27,13 +25,9 @@ namespace SaviaOro.API.Controllers
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetAsync(int id)
         {
-            var course = await _context.Contents
+            Content course = await _context.Contents
                 .FirstOrDefaultAsync(x => x.Id == id);
-            if (course == null)
-            {
-                return NotFound();
-            }
-            return Ok(course);
+            return course == null ? NotFound() : Ok(course);
         }
 
         [HttpPost]
@@ -41,18 +35,15 @@ namespace SaviaOro.API.Controllers
         {
             try
             {
-                _context.Add(content);
-                await _context.SaveChangesAsync();
+                _ = _context.Add(content);
+                _ = await _context.SaveChangesAsync();
                 return Ok(content);
             }
             catch (DbUpdateException dbUpdateException)
             {
-                if (dbUpdateException.InnerException.Message.Contains("duplicate"))
-                {
-                    return BadRequest($"El contenido {content.Title} ya existe para el mismo curso en la base de datos.");
-                }
-
-                return BadRequest(dbUpdateException.InnerException.Message);
+                return dbUpdateException.InnerException.Message.Contains("duplicate")
+                    ? BadRequest($"El contenido {content.Title} ya existe para el mismo curso en la base de datos.")
+                    : (ActionResult)BadRequest(dbUpdateException.InnerException.Message);
             }
             catch (Exception exception)
             {
@@ -65,18 +56,15 @@ namespace SaviaOro.API.Controllers
         {
             try
             {
-                _context.Update(content);
-                await _context.SaveChangesAsync();
+                _ = _context.Update(content);
+                _ = await _context.SaveChangesAsync();
                 return Ok(content);
             }
             catch (DbUpdateException dbUpdateException)
             {
-                if (dbUpdateException.InnerException.Message.Contains("duplicate"))
-                {
-                    return BadRequest($"El contenido {content.Title} ya existe para el mismo curso en la base de datos.");
-                }
-
-                return BadRequest(dbUpdateException.InnerException.Message);
+                return dbUpdateException.InnerException.Message.Contains("duplicate")
+                    ? BadRequest($"El contenido {content.Title} ya existe para el mismo curso en la base de datos.")
+                    : (ActionResult)BadRequest(dbUpdateException.InnerException.Message);
             }
             catch (Exception exception)
             {
@@ -87,13 +75,13 @@ namespace SaviaOro.API.Controllers
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteAsync(int id)
         {
-            var content = await _context.Contents.FirstOrDefaultAsync(x => x.Id == id);
+            Content content = await _context.Contents.FirstOrDefaultAsync(x => x.Id == id);
             if (content == null)
             {
                 return NotFound();
             }
-            _context.Remove(content);
-            await _context.SaveChangesAsync();
+            _ = _context.Remove(content);
+            _ = await _context.SaveChangesAsync();
             return NoContent();
         }
     }
