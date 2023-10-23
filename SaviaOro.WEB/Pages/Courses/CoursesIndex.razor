@@ -9,56 +9,30 @@
 }
 else
 {
-    <div class="card">
-        <div class="card-header">
-            <span>
-                <i class="oi oi-file"></i> Listado de cursos
-                <a class="btn btn-primary btn-sm float-end" href="/course/create">Nuevo curso</a>
-            </span>
-        </div>
-        <div class="card-body">
-            <GenericList MyList="Courses">
-                <Body>
-                    <div class="table-responsive">
-                        <table class="table align-middle table-sm table-striped">
-                            <thead>
-                                <tr>
-                                    <th scope="col"></th>
-                                    <th scope="col">Titulo</th>
-                                    <th scope="col">Descripción corta</th>
-                                    <th scope="col">Descripción larga</th>
-                                    <th scope="col"></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var course in Courses!)
-                                {
-                                    <tr>
-                                        <td>
-                                            <img src="@course.PhotoFullPath" width="80" height="80" style="border-radius:50%" />
-                                        </td>
-                                        <td>
-                                            @course.Title
-                                        </td>
-                                        <td>
-                                            @course.ShortDescription
-                                        </td>
-                                        <td>
-                                            @course.LargeDescription
-                                        </td>
-                                        <td>
-                                            <a href="/course/content/@course.Id" class="btn btn-info btn-sm">Detalles</a>
-                                            <a href="/course/edit/@course.Id" class="btn btn-warning btn-sm">Editar</a>
-                                            <button class="btn btn-danger btn-sm" @onclick=@(() => DeleteAsync(course))>Borrar</button>
-                                        </td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
+    
+    <div class="row row-cols-1 row-cols-md-4 g-4">
+        @foreach (var course in Courses!)
+        {
+            <div class="col mb-4">
+                <div class="card h-100">
+                <img src="@course.PhotoFullPath" class="card-img-top" style="max-height: 350px"/>
+                    <div class="card-body">
+                        <h5 class="card-title">@course.Title</h5>
+                        <p class="card-text">
+                            @course.LargeDescription
+                        </p>
                     </div>
-                </Body>
-            </GenericList>
-        </div>
+                    <div class="card-footer">
+                        <small class="text-muted">
+                            Creado @course.CreationDate!.Value.ToLocalTime().ToShortDateString()
+                            <br/>
+                            <a href="/course/edit/@course.Id" class="btn btn-warning btn-sm">Editar</a>
+                            <button class="btn btn-danger btn-sm" @onclick=@(() => DeleteAsync(course))>Borrar</button>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        }
     </div>
 }
 

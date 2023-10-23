@@ -1,15 +1,29 @@
 ﻿@inherits LayoutComponentBase
 
-<Layout Sider>
+
+
+<Layout>
+    <main>
+        <LayoutHeader>
+            <TopBar/>
+        </LayoutHeader>
+        <LayoutContent Padding="Padding.Is4">
+            @Body
+        </LayoutContent>
+    </main>
+</Layout>
+
+
+@* <Layout Sider>
     <LayoutSider>
         <LayoutSiderContent>
             <NavMenu />
         </LayoutSiderContent>
     </LayoutSider>
     <Layout>
-@*         <LayoutHeader>
+         <LayoutHeader>
             <TopBar />
-        </LayoutHeader> *@
+        </LayoutHeader> 
         <LayoutContent Padding="Padding.Is4">
             @Body
         </LayoutContent>
@@ -17,7 +31,7 @@
             Footer
         </LayoutFooter>
     </Layout>
-</Layout>
+</Layout> *@
 
 
 @* @inject NavigationManager navigationManager

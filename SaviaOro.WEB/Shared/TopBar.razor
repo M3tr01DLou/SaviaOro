@@ -1,33 +1,49 @@
 ﻿<Bar Breakpoint="Breakpoint.Desktop"
      Background="Background.Light"
      ThemeContrast="ThemeContrast.Light">
+
     <BarBrand>
-        Brandname
+        <BarToggler Clicked="@ShowOffcanvas"/>
+        Savia de Oro
     </BarBrand>
-    @* <BarToggler /> *@
-    <BarMenu>
-        <BarStart>
-            <BarItem>
-                <BarLink To="/">
-                    Home
-                </BarLink>
-            </BarItem>
-            <BarItem>
-                <BarLink To="/counter">
-                    Counter
-                </BarLink>
-            </BarItem>
-            <BarItem>
-                <BarLink To="/courses">
-                    Course
-                </BarLink>
-            </BarItem>
-        </BarStart>
-        <BarEnd>
-            <BarItem>
-                <Button Color="Color.Primary">Sign up</Button>
-                <Button Color="Color.Secondary">Log in</Button>
-            </BarItem>
-        </BarEnd>
-    </BarMenu>
+
+    <Offcanvas @ref="offcanvasRef" ShowBackdrop Placement="Placement.Start">
+         <OffcanvasHeader>
+             Offcanvas Start
+         </OffcanvasHeader>
+         <OffcanvasBody>
+             <BarItem>
+                 <BarLink To="/" Clicked="@HideOffcanvas">
+                     <BarIcon IconName="IconName.Dashboard"  />
+                     Home
+                 </BarLink>
+             </BarItem>
+             <BarItem>
+                 <BarLink To="/counter" Clicked="@HideOffcanvas">
+                     <BarIcon IconName="IconName.Dashboard" />
+                     Counter
+                 </BarLink>
+             </BarItem>
+             <BarItem>
+                 <BarLink To="/courses" Clicked="@HideOffcanvas">
+                     <Icon Name="IconName.Train"/> Courses
+                 </BarLink>
+             </BarItem>
+         </OffcanvasBody>
+     </Offcanvas>
+
 </Bar>
+
+@code {
+    private Offcanvas offcanvasRef;
+
+    private Task ShowOffcanvas()
+    {
+        return offcanvasRef.Show();
+    }
+
+    private Task HideOffcanvas()
+    {
+        return offcanvasRef.Hide();
+    }
+}
