@@ -7,14 +7,13 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SaviaOro.API.Data;
 
-
 #nullable disable
 
 namespace SaviaOro.API.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20231019141058_AddContentTable")]
-    partial class AddContentTable
+    [Migration("20231020125539_AddInitialTables")]
+    partial class AddInitialTables
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

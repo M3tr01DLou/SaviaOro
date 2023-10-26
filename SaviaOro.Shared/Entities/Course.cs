@@ -29,8 +29,8 @@ namespace SaviaOro.Shared.Entities
 
         //TODO
         public string PhotoFullPath => string.IsNullOrEmpty(Photo)
-            ? "https://localhost:7223/images/noimage.png"
-            : $"https://localhost:7223/{Photo.Substring(1)}";
+            ? "https://api.lousoftware.eu/images/noimage.png"
+            : $"https://api.lousoftware.eu/{Photo.Substring(1)}";
 
         public bool Active { get; set; }
 

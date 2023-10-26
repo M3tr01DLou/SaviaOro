@@ -1,90 +1,10 @@
 ﻿@inherits LayoutComponentBase
 
-
-
-<Layout>
-    <main>
-        <LayoutHeader>
-            <TopBar/>
-        </LayoutHeader>
-        <LayoutContent Padding="Padding.Is4">
-            @Body
-        </LayoutContent>
-    </main>
-</Layout>
-
-
-@* <Layout Sider>
-    <LayoutSider>
-        <LayoutSiderContent>
-            <NavMenu />
-        </LayoutSiderContent>
-    </LayoutSider>
-    <Layout>
-         <LayoutHeader>
-            <TopBar />
-        </LayoutHeader> 
-        <LayoutContent Padding="Padding.Is4">
-            @Body
-        </LayoutContent>
-        <LayoutFooter>
-            Footer
-        </LayoutFooter>
-    </Layout>
-</Layout> *@
-
-
-@* @inject NavigationManager navigationManager
-
 <div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
-
+    <Header />
     <main>
-        <div class="top-row px-4">
-
-            <nav class="navbar navbar-expand-lg navbar-light">
-                <div class="container-fluid">
-                    <a class="navbar-brand" href="/">
-                        <img src="images/savia-de-oro-logo.jpg" />
-                    </a>
-                    <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
-                        <div class="offcanvas-header">
-                            <a class="navbar-brand" href="#">Navbar</a>
-                        </div>
-                        <div class="offcanvas-body flex-column">
-                            <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
-                                <li class="nav-item px-3">
-                                    <NavLink class="nav-link" @onclick="@(() => navigationManager.NavigateTo("/"))" data-bs-dismiss="offcanvas">
-                                        <span class="oi oi-home" aria-hidden="true"></span> Home
-                                    </NavLink>
-                                </li>
-                                <li class="nav-item px-3">
-                                    <NavLink class="nav-link" @onclick="@(() => navigationManager.NavigateTo("/counter"))" data-bs-dismiss="offcanvas">
-                                        <span class="oi oi-plus" aria-hidden="true"></span> Counter
-                                    </NavLink>
-                                </li>
-                                <li class="nav-item px-3">
-                                    <NavLink class="nav-link" @onclick="@(() => navigationManager.NavigateTo("/courses"))" data-bs-dismiss="offcanvas">
-                                        <span class="oi oi-list-rich" aria-hidden="true"></span> Cursos
-                                    </NavLink>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </nav>
-
-        </div>
-
-        <article class="content px-4">
-            @Body
-        </article>
-
+        @Body
     </main>
+    <Footer />
+    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 </div>
- *@
