@@ -4,14 +4,12 @@
 @inject NavigationManager navigationManager
 @inject ILoginService loginService
 
-<h3>Iniciar Sesión</h3>
-
 <div class="contact">
     <EditForm Model="loginDTO" OnValidSubmit="LoginAsync" class="php-email-form">
         <DataAnnotationsValidator />
 
         <div class="row">
-            <div class="col-4">
+            <div class="col-12">
                 <div class="mb-3">
                     <label>Email:</label>
                     <div>
