@@ -1,10 +1,10 @@
 ﻿<AuthorizeView>
     <Authorized>
-        <span>Hola, @context.User.Identity!.Name</span>
-        <li><a href="Logout" class="nav-link btn btn-link">Cerrar Sesión</a></li>
+        <li><a href="/accounts/edit">Hola, @context.User.Identity!.Name</a></li>
+        <li><a href="/accounts/logout" class="nav-link btn btn-link">Cerrar Sesión</a></li>
     </Authorized>
     <NotAuthorized>
-        <li><a href="Register" class="nav-link btn btn-link">Registro</a></li>
-        <li><a href="Login" class="nav-link btn btn-link">Iniciar Sesión</a></li>
+        <li><a href="/accounts/register" class="nav-link btn btn-link">Registro</a></li>
+        <li><a href="/accounts/login" class="nav-link btn btn-link">Iniciar Sesión</a></li>
     </NotAuthorized>
 </AuthorizeView>
