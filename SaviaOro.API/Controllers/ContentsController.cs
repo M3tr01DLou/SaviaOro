@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SaviaOro.API.Data;
 using SaviaOro.Shared.Entities;
@@ -7,7 +9,8 @@ namespace SaviaOro.API.Controllers
 {
     [ApiController]
     [Route("/api/contents")]
-    public class ContentsController : ControllerBase
+	[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+	public class ContentsController : ControllerBase
     {
         private readonly DataContext _context;
 

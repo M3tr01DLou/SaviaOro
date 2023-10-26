@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SaviaOro.API.Data;
 using SaviaOro.API.Helpers;
@@ -8,7 +10,8 @@ namespace SaviaOro.API.Controllers
 {
     [ApiController]
     [Route("/api/courses")]
-    public class CoursesController : ControllerBase
+	[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+	public class CoursesController : ControllerBase
     {
         private readonly DataContext _context;
         private readonly IImageHelper _imageHelper;
