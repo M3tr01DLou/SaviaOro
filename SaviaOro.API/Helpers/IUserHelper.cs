@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using SaviaOro.Shared.DTOs;
 using SaviaOro.Shared.Entities;
 
 namespace SaviaOro.API.Helpers
@@ -14,6 +15,10 @@ namespace SaviaOro.API.Helpers
         Task AddUserToRoleAsync(User user, string roleName);
 
         Task<bool> IsUserInRoleAsync(User user, string roleName);
-    }
+
+		Task<SignInResult> LoginAsync(LoginDTO model);
+
+		Task LogoutAsync();
+	}
 
 }
