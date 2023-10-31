@@ -31,6 +31,9 @@
 </div>
 
 @code {
+    [CascadingParameter] 
+    BlazoredModalInstance BlazoredModal { get; set; } = default!;
+
     private LoginDTO loginDTO = new();
 
     private async Task LoginAsync()
@@ -44,6 +47,7 @@
         }
 
         await loginService.LoginAsync(responseHttp.Response!.Token);
+        await BlazoredModal.CloseAsync(ModalResult.Ok());
         navigationManager.NavigateTo("/");
     }
 }
