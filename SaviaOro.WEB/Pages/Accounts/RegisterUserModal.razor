@@ -26,7 +26,12 @@
                         else
                         {
                             <div class="row">
-                                <div class="col-6">
+                                <div class="col-md-4 col-xs-12">
+                                    <div class="mb-3">
+                                        <InputImg Label="Foto" ImageSelected="ImageSelected" ImageURL="@imageUrl" />
+                                    </div>
+                                </div>
+                                <div class="col-md-8 col-xs-12">
                                     <div class="mb-3">
                                         <label>Nombres:</label>
                                         <div>
@@ -55,15 +60,6 @@
                                             <ValidationMessage For="@(() => userDTO.Email)" />
                                         </div>
                                     </div>
-                                </div>
-                                <div class="col-6">
-@*                                     <div class="mb-3">
-                                        <label>Foto:</label>
-                                        <div>
-                                            <InputText class="form-control" @bind-Value="@userDTO.Photo" />
-                                            <ValidationMessage For="@(() => userDTO.Photo)" />
-                                        </div>
-                                    </div> *@
                                     <div class="mb-3">
                                         <label>Contraseña:</label>
                                         <div>
@@ -99,18 +95,25 @@
     public string? Title { get; set; }
 
     private UserDTO userDTO = new();
+    private string? imageUrl;
 
     public bool IsLoading { get; set; } = false;
 
     private async Task Close() => await BlazoredModal.CloseAsync(ModalResult.Ok(true));
     private async Task Cancel() => await BlazoredModal.CancelAsync();
 
+    protected override void OnInitialized()
+    {
+        imageUrl = userDTO.PhotoFullPath;
+        userDTO.Photo = null;
+    }
+
     private async Task CreateUserAsync()
     {
         userDTO.UserName = userDTO.Email;
         userDTO.UserType = UserType.User;
         IsLoading = true;
-        var responseHttp = await repository.PostAsync<UserDTO, TokenDTO>("/api/accounts/CreateUser", userDTO);
+        var responseHttp = await repository.PostAsync<UserDTO, TokenDTO>("/api/accounts/createUser", userDTO);
         IsLoading = false;
         if (responseHttp.Error)
         {
@@ -122,6 +125,12 @@
         await loginService.LoginAsync(responseHttp.Response!.Token);
         await Close();
         navigationManager.NavigateTo("/");
+    }
+
+    private void ImageSelected(string imagenBase64)
+    {
+        userDTO.Photo = imagenBase64;
+        imageUrl = null;
     }
 
 }

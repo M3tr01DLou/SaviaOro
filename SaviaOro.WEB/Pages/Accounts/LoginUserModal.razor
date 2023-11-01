@@ -73,7 +73,7 @@
     private async Task LoginAsync()
     {
         IsLoading = true;
-        var responseHttp = await repository.PostAsync<LoginDTO, TokenDTO>("/api/accounts/Login", loginDTO);
+        var responseHttp = await repository.PostAsync<LoginDTO, TokenDTO>("/api/accounts/login", loginDTO);
         IsLoading = false;
         if (responseHttp.Error)
         {

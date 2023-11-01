@@ -1,34 +1,43 @@
 ﻿<AuthorizeView>
     <Authorized>
-        <li><a href="/accounts/edit">Hola, @context.User.Identity!.Name</a></li>
+        @if (!string.IsNullOrEmpty(photoUser))
+        {
+            <div class="mx-2">
+                <img src="@photoUser" width="50" height="50" style="border-radius:50%" />
+            </div>
+        }
+        <li><a @onclick=@(()=> ShowEditUserModal()) class="nav-link btn btn-link">Hola, @context.User.Identity!.Name</a></li>
         <li><a href="/accounts/logout" class="nav-link btn btn-link">Cerrar Sesión</a></li>
     </Authorized>
     <NotAuthorized>
         @* <li><a href="/accounts/register" class="nav-link btn btn-link">Registrar</a></li> *@
-        <li><a @onclick=@(()=> ShowRegisterModal()) class="nav-link btn btn-link">Registrar</a></li>
-        <li><a @onclick=@(()=> ShowLoginModal()) class="nav-link btn btn-link">Iniciar Sesión</a></li>
+        <li><a @onclick=@(()=> ShowRegisterUserModal()) class="nav-link btn btn-link">Registrar</a></li>
+        <li><a @onclick=@(()=> ShowLoginUserModal()) class="nav-link btn btn-link">Iniciar Sesión</a></li>
     </NotAuthorized>
 </AuthorizeView>
 
 
-@code{
+@code {
+    private string photoUser;
+
     [CascadingParameter]
     IModalService Modal { get; set; } = default!;
 
-    private void ShowLoginModal()
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; } = null!;
+
+    protected async override Task OnParametersSetAsync()
     {
-        var options = new ModalOptions
-            {
-                UseCustomLayout = true,
-            };
-
-        var parameters = new ModalParameters()
-            .Add(nameof(LoginModal.Title), "Iniciar sesión");
-
-        Modal.Show<LoginModal>("Iniciar sesión", parameters, options);
+        var authenticationState = await authenticationStateTask;
+        var claims = authenticationState.User.Claims.ToList();
+        var photoClaim = claims.FirstOrDefault(x => x.Type == "Photo");
+        if (photoClaim is not null)
+        {
+            photoUser = photoClaim.Value;
+        }
     }
 
-    private void ShowRegisterModal()
+    private void ShowLoginUserModal()
     {
         var options = new ModalOptions
             {
@@ -36,8 +45,34 @@
             };
 
         var parameters = new ModalParameters()
-            .Add(nameof(RegisterModal.Title), "Registrar usuario");
+            .Add(nameof(LoginUserModal.Title), "Iniciar sesión");
 
-        Modal.Show<RegisterModal>("Bootstrap Modal", parameters, options);
+        Modal.Show<LoginUserModal>("Iniciar sesión", parameters, options);
+    }
+
+    private void ShowRegisterUserModal()
+    {
+        var options = new ModalOptions
+            {
+                UseCustomLayout = true,
+            };
+
+        var parameters = new ModalParameters()
+            .Add(nameof(RegisterUserModal.Title), "Registrar usuario");
+
+        Modal.Show<RegisterUserModal>("Bootstrap Modal", parameters, options);
+    }
+
+    private void ShowEditUserModal()
+    {
+        var options = new ModalOptions
+            {
+                UseCustomLayout = true,
+            };
+
+        var parameters = new ModalParameters()
+            .Add(nameof(EditUserModal.Title), "Editar usuario");
+
+        Modal.Show<EditUserModal>("Bootstrap Modal", parameters, options);
     }
 }

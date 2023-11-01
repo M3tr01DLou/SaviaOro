@@ -1,0 +1,130 @@
+﻿@page "/accounts/edit"
+@inject IRepository repository
+@inject SweetAlertService sweetAlertService
+@inject NavigationManager navigationManager
+@inject ILoginService loginService
+
+<div class="modal fade show d-block" tabindex="-1" role="dialog">
+    <div class="modal-backdrop fade show" @onclick="Cancel"></div>
+    <div class="modal-dialog modal-xl" style="z-index: 1050">
+        <div class="modal-content">
+            <div class="contact">
+                @if (user != null)
+                {
+                    <EditForm Model="user" OnValidSubmit="EditUserAsync" class="php-email-form">
+                        <DataAnnotationsValidator />
+                        <div class="modal-header">
+                            <h5 class="modal-title">@Title</h5>
+                            <button type="button" class="btn-close" aria-label="Close" @onclick="Close">
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            @if (IsLoading)
+                            {
+                                <div class="text-center">
+                                    <div class="spinner-border" role="status" />
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="row">
+                                    <div class="col-md-4 col-xs-12">
+                                        <div class="mb-3">
+                                            <InputImg Label="Foto" ImageSelected="ImageSelected" ImageURL="@imageUrl" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-8 col-xs-12">
+                                        <div class="mb-3">
+                                            <label>Nombres:</label>
+                                            <div>
+                                                <InputText class="form-control" @bind-Value="@user.FirstName" />
+                                                <ValidationMessage For="@(() => user.FirstName)" />
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label>Apellidos:</label>
+                                            <div>
+                                                <InputText class="form-control" @bind-Value="@user.LastName" />
+                                                <ValidationMessage For="@(() => user.LastName)" />
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label>Teléfono:</label>
+                                            <div>
+                                                <InputText class="form-control" @bind-Value="@user.PhoneNumber" />
+                                                <ValidationMessage For="@(() => user.PhoneNumber)" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        <div class="modal-footer align-items-center">
+                            <button class="btn btn-primary" type="submit">Modificar</button>
+                        </div>
+                    </EditForm>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private User? user;
+    private string imageUrl;
+
+    [CascadingParameter]
+    BlazoredModalInstance BlazoredModal { get; set; } = default!;
+
+    [Parameter]
+    public string? Title { get; set; }
+
+    public bool IsLoading { get; set; } = false;
+
+    private async Task Close() => await BlazoredModal.CloseAsync(ModalResult.Ok(true));
+    private async Task Cancel() => await BlazoredModal.CancelAsync();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadUserAsync();
+    }
+
+    private async Task LoadUserAsync()
+    {
+        IsLoading = true;
+        var responseHTTP = await repository.GetAsync<User>($"/api/accounts");
+        IsLoading = false;
+        if (responseHTTP.Error)
+        {
+            var message = await responseHTTP.GetErrorMessageAsync();
+            await sweetAlertService.FireAsync("Error", message, SweetAlertIcon.Error);
+            return;
+        }
+        user = responseHTTP.Response;
+        imageUrl = user.PhotoFullPath;
+        user.Photo = null;
+    }
+
+    private async Task EditUserAsync()
+    {
+        IsLoading = true;
+        var responseHttp = await repository.PutAsync<User, TokenDTO>("/api/accounts", user);
+        IsLoading = false;
+        if (responseHttp.Error)
+        {
+            var message = await responseHttp.GetErrorMessageAsync();
+            await sweetAlertService.FireAsync("Error", message, SweetAlertIcon.Error);
+            return;
+        }
+
+        await loginService.LoginAsync(responseHttp.Response.Token);
+        await Close();
+        navigationManager.NavigateTo("/");
+    }
+
+    private void ImageSelected(string imagenBase64)
+    {
+        user.Photo = imagenBase64;
+        imageUrl = null;
+    }
+}

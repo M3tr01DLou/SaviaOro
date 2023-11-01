@@ -27,7 +27,7 @@ namespace SaviaOro.Shared.Entities
 
         public string Photo { get; set; }
 
-        //TODO
+        //TODO:
         public string PhotoFullPath => string.IsNullOrEmpty(Photo)
             ? "https://api.lousoftware.eu/images/noimage.png"
             : $"https://api.lousoftware.eu/{Photo.Substring(1)}";

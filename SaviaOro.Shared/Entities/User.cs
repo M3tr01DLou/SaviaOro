@@ -24,6 +24,11 @@ namespace SaviaOro.Shared.Entities
         [Display(Name = "Foto")]
         public string? Photo { get; set; }
 
+        //TODO:
+        public string PhotoFullPath => string.IsNullOrEmpty(Photo)
+            ? "https://api.lousoftware.eu/images/noimage.png"
+            : $"https://api.lousoftware.eu/{Photo.Substring(1)}";
+
         [Display(Name = "Tipo de usuario")]
         public UserType UserType { get; set; }
 
