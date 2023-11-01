@@ -5,9 +5,7 @@
     </Authorized>
     <NotAuthorized>
         <li><a href="/accounts/register" class="nav-link btn btn-link">Registro</a></li>
-        @* <li><a class="nav-link btn btn-link" @onclick="() => ModalDialog.Open()">Iniciar sesión</a></li> *@
         <li><a @onclick=@(()=> ShowModal()) class="nav-link btn btn-link">Iniciar Sesión</a></li>
-        @* <li><a data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="nav-link btn btn-link">Iniciar Sesión</a></li> *@
     </NotAuthorized>
 </AuthorizeView>
 
@@ -18,7 +16,14 @@
 
     private void ShowModal()
     {
-        IModalReference modalReference;
-        modalReference = Modal.Show<Login>("Iniciar sesión");
+        var options = new ModalOptions
+            {
+                UseCustomLayout = true,
+            };
+
+        var parameters = new ModalParameters()
+            .Add(nameof(LoginModal.Title), "Iniciar sesión");
+
+        Modal.Show<LoginModal>("Bootstrap Modal", parameters, options);
     }
 }
