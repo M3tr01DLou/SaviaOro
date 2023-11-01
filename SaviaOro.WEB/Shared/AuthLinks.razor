@@ -4,8 +4,9 @@
         <li><a href="/accounts/logout" class="nav-link btn btn-link">Cerrar Sesión</a></li>
     </Authorized>
     <NotAuthorized>
-        <li><a href="/accounts/register" class="nav-link btn btn-link">Registro</a></li>
-        <li><a @onclick=@(()=> ShowModal()) class="nav-link btn btn-link">Iniciar Sesión</a></li>
+        @* <li><a href="/accounts/register" class="nav-link btn btn-link">Registrar</a></li> *@
+        <li><a @onclick=@(()=> ShowRegisterModal()) class="nav-link btn btn-link">Registrar</a></li>
+        <li><a @onclick=@(()=> ShowLoginModal()) class="nav-link btn btn-link">Iniciar Sesión</a></li>
     </NotAuthorized>
 </AuthorizeView>
 
@@ -14,7 +15,7 @@
     [CascadingParameter]
     IModalService Modal { get; set; } = default!;
 
-    private void ShowModal()
+    private void ShowLoginModal()
     {
         var options = new ModalOptions
             {
@@ -24,6 +25,19 @@
         var parameters = new ModalParameters()
             .Add(nameof(LoginModal.Title), "Iniciar sesión");
 
-        Modal.Show<LoginModal>("Bootstrap Modal", parameters, options);
+        Modal.Show<LoginModal>("Iniciar sesión", parameters, options);
+    }
+
+    private void ShowRegisterModal()
+    {
+        var options = new ModalOptions
+            {
+                UseCustomLayout = true,
+            };
+
+        var parameters = new ModalParameters()
+            .Add(nameof(RegisterModal.Title), "Registrar usuario");
+
+        Modal.Show<RegisterModal>("Bootstrap Modal", parameters, options);
     }
 }

@@ -34,6 +34,11 @@ namespace SaviaOro.API.Controllers
 				return Ok(BuildToken(user));
 			}
 
+			if(result.Errors.FirstOrDefault().Code.ToLower().Contains("duplicate"))
+			{
+                return BadRequest("El email que intenta registrar ya existe. Por favor, pruebe con otro email.");
+            }
+
 			return BadRequest(result.Errors.FirstOrDefault());
 		}
 

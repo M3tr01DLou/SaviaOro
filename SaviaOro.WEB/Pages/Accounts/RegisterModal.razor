@@ -1,0 +1,127 @@
+﻿@page "/accounts/register"
+@inject IRepository repository
+@inject SweetAlertService sweetAlertService
+@inject NavigationManager navigationManager
+@inject ILoginService loginService
+
+<div class="modal fade show d-block" tabindex="-1" role="dialog">
+    <div class="modal-backdrop fade show" @onclick="Cancel"></div>
+    <div class="modal-dialog modal-xl" style="z-index: 1050">
+        <div class="modal-content">
+            <div class="contact">
+                <EditForm Model="userDTO" OnValidSubmit="CreateUserAsync" class="php-email-form">
+                <DataAnnotationsValidator />
+                    <div class="modal-header">
+                        <h5 class="modal-title">@Title</h5>
+                        <button type="button" class="btn-close" aria-label="Close" @onclick="Close">
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        @if (IsLoading)
+                        {
+                            <div class="text-center">
+                                <div class="spinner-border" role="status"/>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="mb-3">
+                                        <label>Nombres:</label>
+                                        <div>
+                                            <InputText class="form-control" @bind-Value="@userDTO.FirstName" />
+                                            <ValidationMessage For="@(() => userDTO.FirstName)" />
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label>Apellidos:</label>
+                                        <div>
+                                            <InputText class="form-control" @bind-Value="@userDTO.LastName" />
+                                            <ValidationMessage For="@(() => userDTO.LastName)" />
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label>Teléfono:</label>
+                                        <div>
+                                            <InputText class="form-control" @bind-Value="@userDTO.PhoneNumber" />
+                                            <ValidationMessage For="@(() => userDTO.PhoneNumber)" />
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label>Email:</label>
+                                        <div>
+                                            <InputText class="form-control" @bind-Value="@userDTO.Email" />
+                                            <ValidationMessage For="@(() => userDTO.Email)" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+@*                                     <div class="mb-3">
+                                        <label>Foto:</label>
+                                        <div>
+                                            <InputText class="form-control" @bind-Value="@userDTO.Photo" />
+                                            <ValidationMessage For="@(() => userDTO.Photo)" />
+                                        </div>
+                                    </div> *@
+                                    <div class="mb-3">
+                                        <label>Contraseña:</label>
+                                        <div>
+                                            <InputText type="password" class="form-control" @bind-Value="@userDTO.Password" />
+                                            <ValidationMessage For="@(() => userDTO.Password)" />
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label>Confirmación de contraseña:</label>
+                                        <div>
+                                            <InputText type="password" class="form-control" @bind-Value="@userDTO.PasswordConfirm" />
+                                            <ValidationMessage For="@(() => userDTO.PasswordConfirm)" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <div class="modal-footer align-items-center">
+                        <button class="btn btn-primary" type="submit">Registrar</button>
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [CascadingParameter]
+    BlazoredModalInstance BlazoredModal { get; set; } = default!;
+
+    [Parameter]
+    public string? Title { get; set; }
+
+    private UserDTO userDTO = new();
+
+    public bool IsLoading { get; set; } = false;
+
+    private async Task Close() => await BlazoredModal.CloseAsync(ModalResult.Ok(true));
+    private async Task Cancel() => await BlazoredModal.CancelAsync();
+
+    private async Task CreateUserAsync()
+    {
+        userDTO.UserName = userDTO.Email;
+        userDTO.UserType = UserType.User;
+        IsLoading = true;
+        var responseHttp = await repository.PostAsync<UserDTO, TokenDTO>("/api/accounts/CreateUser", userDTO);
+        IsLoading = false;
+        if (responseHttp.Error)
+        {
+            var message = await responseHttp.GetErrorMessageAsync();
+            await sweetAlertService.FireAsync("Error", message, SweetAlertIcon.Error);
+            return;
+        }
+
+        await loginService.LoginAsync(responseHttp.Response!.Token);
+        await Close();
+        navigationManager.NavigateTo("/");
+    }
+
+}
