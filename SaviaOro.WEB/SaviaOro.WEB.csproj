@@ -19,4 +19,9 @@
     <ProjectReference Include="..\SaviaOro.Shared\SaviaOro.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\images\clothes\" />
+    <Folder Include="wwwroot\images\size\" />
+  </ItemGroup>
+
 </Project>
